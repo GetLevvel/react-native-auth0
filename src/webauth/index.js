@@ -1,17 +1,16 @@
 import Agent from './agent';
-import {NativeModules, Platform} from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 
 import url from 'url';
 import AuthError from '../auth/authError';
-import verifyToken from '../jwt';
 
-const {A0Auth0} = NativeModules;
+const { A0Auth0 } = NativeModules;
 
 const callbackUri = domain => {
   const bundleIdentifier = A0Auth0.bundleIdentifier;
   return `${bundleIdentifier.toLowerCase()}://${domain}/${
     Platform.OS
-  }/${bundleIdentifier}/callback`;
+    }/${bundleIdentifier}/callback`;
 };
 
 /**
@@ -27,7 +26,7 @@ const callbackUri = domain => {
 export default class WebAuth {
   constructor(auth) {
     this.client = auth;
-    const {baseUrl, clientId, domain} = auth;
+    const { baseUrl, clientId, domain } = auth;
     this.domain = domain;
     this.clientId = clientId;
     this.agent = new Agent();
@@ -55,9 +54,9 @@ export default class WebAuth {
    *
    * @memberof WebAuth
    */
-  authorize(parameters = {}, options = {}, audiences = []) {
-    const {clientId, domain, client, agent} = this;
-    return agent.newTransaction().then(({state, verifier, ...defaults}) => {
+  authorize(parameters = {}) {
+    const { clientId, domain, agent } = this;
+    return agent.newTransaction().then(({ state, verifier, ...defaults }) => {
       const redirectUri = callbackUri(domain);
       const expectedState = parameters.state || state;
       let query = {
@@ -84,7 +83,7 @@ export default class WebAuth {
         const resultState = this.parseHash(urlHash, 'state');
         const error = this.parseHash(urlHash, 'error');
         if (error) {
-          throw new AuthError({json: query, status: 0});
+          throw new AuthError({ json: query, status: 0 });
         }
         if (resultState !== expectedState) {
           throw new AuthError({
@@ -96,18 +95,7 @@ export default class WebAuth {
           });
         }
 
-        return client
-          .exchange({audiences}, {Authorization: 'Bearer ' + accessToken})
-          .then(credentials => {
-            return verifyToken(credentials.idToken, {
-              domain,
-              clientId,
-              nonce: parameters.nonce,
-              maxAge: parameters.max_age,
-              scope: parameters.scope,
-              leeway: options.leeway,
-            }).then(() => Promise.resolve(credentials));
-          });
+        return accessToken
       });
     });
   }
@@ -125,7 +113,7 @@ export default class WebAuth {
    * @memberof WebAuth
    */
   clearSession(options = {}) {
-    const {client, agent, domain, clientId} = this;
+    const { client, agent, domain, clientId } = this;
     options.clientId = clientId;
     options.returnTo = callbackUri(domain);
     options.federated = options.federated || false;
