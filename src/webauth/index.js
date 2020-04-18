@@ -79,7 +79,7 @@ export default class WebAuth {
           });
         }
         const urlHash = url.parse(redirectUrl, true).hash;
-        const accessToken = this.parseHash(urlHash, 'access_token');
+        const idToken = this.parseHash(urlHash, 'access_token');
         const resultState = this.parseHash(urlHash, 'state');
         const error = this.parseHash(urlHash, 'error');
         if (error) {
@@ -95,7 +95,7 @@ export default class WebAuth {
           });
         }
 
-        return accessToken
+        return { idToken }
       });
     });
   }
