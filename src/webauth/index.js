@@ -82,6 +82,7 @@ export default class WebAuth {
         const idToken = this.parseHash(urlHash, 'access_token');
         const resultState = this.parseHash(urlHash, 'state');
         const error = this.parseHash(urlHash, 'error');
+        const expiresIn = this.parseHash(urlHash, 'expires_in')
         if (error) {
           throw new AuthError({ json: query, status: 0 });
         }
@@ -95,7 +96,7 @@ export default class WebAuth {
           });
         }
 
-        return { idToken }
+        return { idToken, expiresIn }
       });
     });
   }
