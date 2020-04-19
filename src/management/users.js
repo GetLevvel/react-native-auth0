@@ -41,24 +41,14 @@ export default class Users {
   /**
    * Returns the user by identifier
    *
-   * @param {Object} parameters get user by identifier parameters
-   * @param {String} parameters.id identifier of the user to obtain
    * @returns {Promise}
    * @see https://auth0.com/docs/api/management/v2#!/Users/get_users_by_id
    *
    * @memberof Users
    */
-  getUser(parameters = {}) {
-    const payload = apply(
-      {
-        parameters: {
-          id: { required: true }
-        }
-      },
-      parameters
-    );
+  getUser() {
     return this.client
-      .get(`/api/v2/users/${encodeURIComponent(payload.id)}`)
+      .get(`/userinfo`, undefined, { "Authorization": this.client.bearer})
       .then(response =>
         responseHandler(response, {
           attributes,

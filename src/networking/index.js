@@ -33,8 +33,8 @@ export default class Client {
     return this.request('PATCH', this.url(path), body);
   }
 
-  get(path, query) {
-    return this.request('GET', this.url(path, query));
+  get(path, query, headers = {}) {
+    return this.request('GET', this.url(path, query), undefined, headers);
   }
 
   url(path, query, includeTelemetry = false) {
