@@ -128,4 +128,11 @@ export default class WebAuth {
       .split('&')[0]
       .split('=')[1];
   }
+
+  logout(logoutUrl = `https://${this.domain}/v2/logout`, returnTo = callbackUri(this.domain)) {
+
+    const fullLogoutUrl = `${logoutUrl}?clientID=${this.clientId}&returnTo=${returnTo}`
+
+    return this.agent.show(fullLogoutUrl)
+  }
 }
